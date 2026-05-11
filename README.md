@@ -19,3 +19,5 @@ Currently, the trained and tested code includes \flash-linear-attention\legacy\t
 At present, the implementation speed of rwkv7 is slow and still needs further optimization.
 
 We provide a training acceleration version of GDN in \flash-linear-attention\legacy\training\fla4\layers\mask_gdn.py
+
+Some checkpoints and eval_results can be seen in https://huggingface.co/msj19/
