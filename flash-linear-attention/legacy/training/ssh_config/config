@@ -1,0 +1,6 @@
+StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
+Host pt-278bc5f36537420d894f277850e529df-master-0
+  Hostname pt-278bc5f36537420d894f277850e529df-master-0.pt-278bc5f36537420d894f277850e529df
+Host pt-278bc5f36537420d894f277850e529df-worker-0
+  Hostname pt-278bc5f36537420d894f277850e529df-worker-0.pt-278bc5f36537420d894f277850e529df

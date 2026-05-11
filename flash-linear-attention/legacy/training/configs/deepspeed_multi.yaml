@@ -1,0 +1,23 @@
+compute_environment: LOCAL_MACHINE
+distributed_type: DEEPSPEED
+deepspeed_config:
+  deepspeed_config_file: configs/ds_config.json
+  zero3_init_flag: true
+  deepspeed_hostfile: /mnt/jfzn/msj/flash-linear-attention/legacy/training/hostfile.txt
+  deepspeed_multinode_launcher: pdsh
+machine_rank: 0
+main_process_ip: "10.119.141.222" 
+main_process_port: 29508
+main_training_function: main
+num_machines: 4
+num_processes: 32
+same_network: true
+use_cpu: false
+rdzv_backend: c10d
+tpu_env: []
+tpu_use_cluster: false
+tpu_use_sudo: false
+
+# deepspeed_multinode_launcher: slurm
+# 10.119.141.212 51003
+# 10.119.141.222 51009
