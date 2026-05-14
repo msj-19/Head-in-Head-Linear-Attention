@@ -163,7 +163,7 @@ def gated_chunk_scaled_dot_kkt_fwd_kernel(
         p_g = tl.make_block_ptr(g + bos*H + i_h, (T,), (H,), (i_t * BT,), (BT,), (0,))
         b_g = tl.load(p_g, boundary_check=(0,))
         b_g_diff = b_g[:, None] - b_g[None, :]
-        b_A *= exp(b_g_diff)[:,:,None,None]
+        b_A *= safe_exp(b_g_diff)[:,:,None,None]
     b_A *= b_b[:, None][:,:,None,None]
 
     m_A = (o_t[:, None] > o_t[None, :]) & (m_t[:, None] & m_t)
@@ -1053,7 +1053,7 @@ def gated_chunk_linear_attn_fwd_kernel_o(
         p_g = tl.make_block_ptr(g, (T,), (H,), (i_t * BT,), (BT,), (0,))
         b_g = tl.load(p_g, boundary_check=(0,))
         b_o = b_o * exp(b_g)[:, None]
-        b_s = b_s * exp(b_g[:, None] - b_g[None, :])
+        b_s = b_s * safe_exp(b_g[:, None] - b_g[None, :])
 
 
     o_t = i_t * BT + tl.arange(0, BT)
@@ -1618,7 +1618,7 @@ def gated_chunk_delta_rule_bwd_kernel_dqkw(
     b_dk = b_dk * tl.where(m_t, exp(-b_g + b_g_last), 0)[:, None]
     b_dg_last += tl.sum(b_dk * b_k)
 
-    b_ds = tl.where(m_A, b_ds * exp(b_g[:, None] - b_g[None, :]), 0) * scale
+    b_ds = tl.where(m_A, b_ds * safe_exp(b_g[:, None] - b_g[None, :]), 0) * scale
     b_ds = b_ds.to(b_k.dtype)
     # [BT, BK]
     b_dq += tl.dot(b_ds, b_k)
@@ -1791,7 +1791,7 @@ def gated_bwd_prepare_wy_repr_kernel(
 
     b_dA = tl.where(m_A, -b_dA, 0)
     b_dA = tl.reshape(b_dA,(BT,r,BT,r))
-    b_dA *= exp(b_g[:, None] - b_g[None, :])[:,None,:,None]
+    b_dA *= safe_exp(b_g[:, None] - b_g[None, :])[:,None,:,None]
 
     b_dA = b_dA.to(k.dtype.element_ty)
     b_dA = tl.permute(b_dA,(0,2,1,3))#Bt bt r r
