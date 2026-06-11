@@ -241,14 +241,14 @@ class mask_gdn(nn.Module):
         r = self.r
         if self.learn:
             target_matrix = self.mask(hidden_states).abs()
-            target_matrix = rearrange(target_matrix,'b l (h r c)->b h l r c',r=r,h=self.num_heads)#bhlrr
+            target_matrix = rearrange(target_matrix,'b l (h r c)->b l h r c',r=r,h=self.num_heads)#bhlrr
             target_matrix = l2norm(target_matrix)
             target_matrix = target_matrix@target_matrix.transpose(-1,-2)
         else:
             target_matrix = self.mask.abs()
             target_matrix = l2norm(target_matrix)
             target_matrix = target_matrix@target_matrix.transpose(-1,-2)
-            target_matrix = target_matrix.unsqueeze(1).unsqueeze(0).expand(batch_size,self.num_heads,q_len,self.r,self.r)
+            target_matrix = target_matrix.unsqueeze(0).unsqueeze(0).expand(batch_size,q_len,self.num_heads,self.r,self.r)
         if mode == 'recurrent':
             o,recurrent_state_sf = mask_fused_recurrent_gated_delta_rule(q.contiguous(),k.contiguous(),v.contiguous(),beta.contiguous(),g.contiguous(),target_matrix.contiguous(),initial_state=recurrent_state_sf,output_final_state=True)
         else:
